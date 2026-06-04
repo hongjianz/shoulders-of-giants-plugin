@@ -5,6 +5,7 @@
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$0")/../..}"
 
 references=(
+  "INDEX.md"
   "00-workflow-overview.md"
   "01-problem-classification.md"
   "02-search-plan.md"
@@ -13,6 +14,8 @@ references=(
   "05-adversarial-verification.md"
   "06-synthesis-report.md"
   "07-timeline-analysis.md"
+  "08-output-management.md"
+  "09-troubleshooting.md"
   "10-integration-industry-analysis.md"
 )
 

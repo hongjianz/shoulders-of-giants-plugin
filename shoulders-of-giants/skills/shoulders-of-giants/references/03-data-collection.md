@@ -24,13 +24,54 @@
 
 检测方法:
   从返回结果提取 query_translation 字段
-  检查是否包含已知陷阱词的错误翻译
+  执行自动检查逻辑（见下方伪代码）
   若发现 → 建议用户修正关键词后重试
 
 修正建议:
   "AI"[All Fields] → "artificial intelligence"[TIAB]
   "ML"[All Fields] → "machine learning"[TIAB]
   "POCT"[All Fields] → "point-of-care testing"[TIAB]
+```
+
+**MeSH翻译检测伪代码**:
+
+```python
+# 伪代码逻辑 — 在每次PubMed检索后自动执行
+known_traps = {
+    "AI": ["antagonists and inhibitors", "artificial intelligence"],
+    "ML": ["machine learning"],
+    "POCT": ["point-of-care testing"],
+}
+
+def check_query_translation(original_query, translated_query):
+    warnings = []
+    for term, expected in known_traps.items():
+        if term in original_query:
+            if not any(e in translated_query for e in expected):
+                warnings.append(f"⚠  '{term}' 可能被MeSH错误翻译: {translated_query}")
+    return warnings
+```
+
+**MeSH翻译异常提示模板**:
+
+当检测到可能的翻译问题时，向用户展示：
+
+```
+┌───────── PubMed MeSH 翻译校验 ─────────────────┐
+│                                                  │
+│  原始查询: "AI enzyme design diagnostics"         │
+│  MeSH翻译: (antagonists and inhibitors[...])      │
+│            AND (enzymes[...]) AND (...)           │
+│                                                  │
+│  ⚠ 发现问题: "AI" 被翻译为                       │
+│     "antagonists and inhibitors"                  │
+│                                                  │
+│  建议修正:                                        │
+│  使用 "artificial intelligence"[TIAB]             │
+│  替代 "AI"[All Fields]                           │
+│                                                  │
+│  是否重新检索？ [是/否]                           │
+└──────────────────────────────────────────────────┘
 ```
 
 **0结果处理**:
@@ -42,8 +83,10 @@
 
 [PubMed 0结果]
   第1尝试: 检查MeSH翻译异常 → 若异常则修正后重试
+    异常判断逻辑: 从 query_translation 提取翻译结果, 与 known_traps 对比
+    若发现陷阱词: 建议使用 [TIAB] 替代 [All Fields]
   第2尝试: 去掉最具体的限定词，保留核心概念
-  第3尝试: 拆分成更宽泛的子查询，分别检索
++ 第3尝试: 拆分成更宽泛的子查询，分别检索
   第4尝试: 切换到 WebSearch site:pubmed.ncbi.nlm.nih.gov
   若全部失败 → 标记"PubMed不可用" + 记录信息缺口
 

@@ -65,10 +65,20 @@
 | ⚪ | 未找到明确反方证据 | 标注"未证伪"，不调整 |
 | ❌ | 搜索无结果/数据源不可用 | 记录为信息缺口 |
 
+## 搜索策略建议
+
+| 角度 | 推荐数据源 | 关键词模式 |
+|------|-----------|-----------|
+| A.技术局限性 | PubMed, Consensus | `X limitation`, `X challenge`, `X failure`, `X barrier` |
+| B.乐观偏差 | Web Search, Consensus | `X overhyped`, `X skepticism`, `X overly optimistic` |
+| C.替代解释 | PubMed, Web Search | `X versus Y`, `alternative explanation for X`, `X debate` |
+
 ## 质量要求
 
 - 每个角度至少执行1次搜索
+- 每个主张至少需要 **1个可靠的对抗数据点**（同行评议论文或可验证的产业信息）
 - 反方证据的质量评级被纳入最终的证据水印系统
 - "未找到反方证据"不等于"证明正确"——在报告中标注为"未证伪"
+- 如果三轮搜索后仍无结果 → 标记为"未证伪"而非"已验证"
 - 如果3个角度全部为⚪或❌，主张的置信度不受影响（但需标注信息缺口）
 - 如果1个角度为✅，根据权重决定是否下调置信度

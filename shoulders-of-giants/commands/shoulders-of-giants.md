@@ -22,7 +22,7 @@ Use this command when the user explicitly invokes it. For the full skill instruc
 
 ```
 /shoulders-of-giants <research-question>               # 标准模式（6阶段完整流程）
-/shoulders-of-giants --quick <research-question>        # 快速模式（4阶段，可跳过对抗验证）
+/shoulders-of-giants --quick <research-question>        # 快速模式（跳过对抗验证，保留报告输出）
 /shoulders-of-giants --deep <research-question>         # 深度模式（追加时间序列分析）
 ```
 
@@ -39,7 +39,7 @@ Use this command when the user explicitly invokes it. For the full skill instruc
 | Mode | Phases | Anticipated Turns | Best For |
 |------|--------|-------------------|----------|
 | Standard | 6 phases | 4-6 turns | Most research questions |
-| Quick | 4 phases (skip 5-6) | 2-3 turns | Rapid overview, familiar topic |
+| Quick | 5 phases (skip 5) | 2-3 turns | Rapid overview, familiar topic |
 | Deep | 6 + timeline | 5-8 turns | Strategic decisions, investment research |
 
 ## Related Commands
