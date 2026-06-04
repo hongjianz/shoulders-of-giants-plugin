@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/plugins/cache/
+
+# Editor
+*.swp
+*.swo
+*~

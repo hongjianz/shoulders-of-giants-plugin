@@ -1,0 +1,13 @@
+{
+  "name": "shoulders-of-giants-sop",
+  "owner": {
+    "name": "hongjianz"
+  },
+  "plugins": [
+    {
+      "name": "shoulders-of-giants",
+      "source": "./shoulders-of-giants",
+      "description": "系统性调研方法论——多源并行采集+证据分层+对抗验证+带可信度评级的综合报告"
+    }
+  ]
+}
