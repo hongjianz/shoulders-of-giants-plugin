@@ -2,7 +2,7 @@
 
 > 站在巨人的肩膀上，做更可靠的科研调研。
 
-一个基于 Claude Code 的系统性研究方法论 6 阶段工作流插件。通过多源交叉验证、证据水印和对抗验证机制，提升 AI 辅助科研调研的信源覆盖度和结论可靠性。
+一个基于 Claude Code 的系统性研究方法论 6 阶段工作流插件（v1.0）。通过多源交叉验证、证据水印、对抗验证和时间序列分析机制，提升 AI 辅助科研调研的信源覆盖度和结论可靠性。支持专利检索、0 结果自动重路由、与 industry-analysis 插件联动。
 
 ---
 
@@ -76,6 +76,10 @@ claude plugins install ./shoulders-of-giants-plugin
 
 ```
 问题分类 → 检索方案 → 多源采集 → 证据标注 → 对抗验证 → 综合报告
+                      │
+                      └── 时间序列分析（deep模式）
+                      └── 专利检索（按需）
+                      └── 0结果自动重路由
 ```
 
 ### 阶段 1: 问题分类
@@ -113,24 +117,19 @@ claude plugins install ./shoulders-of-giants-plugin
 
 ## 参考文件
 
-| 文件 | 用途 |
-|------|------|
-| `00-workflow-overview.md` | 完整流程导航、模式对比、交互密度表 |
-| `01-problem-classification.md` | 自动分类规则、中文通道触发条件 |
-| `02-search-plan.md` | MCP 路由决策树、关键词设计原则 |
-| `03-data-collection.md` | 各数据源调用规范、MeSH 陷阱检测、0 结果处理 |
-| `04-evidence-labeling.md` | 7 级水印系统、交叉验证矩阵 |
-| `05-adversarial-verification.md` | 3 角度验证模板、置信度调整规则 |
-| `06-synthesis-report.md` | 报告模板、水印集成、对抗结果整合 |
+| 文件 | 用途 | 版本 |
+|------|------|------|
+| `00-workflow-overview.md` | 完整流程导航、模式对比、交互密度表 | v0.9 |
+| `01-problem-classification.md` | 自动分类规则、中文通道触发条件 | v0.9 |
+| `02-search-plan.md` | 自动路由矩阵、领域增强路由、MCP 降级规则 | v1.0 |
+| `03-data-collection.md` | 各数据源调用规范 + 专利检索 SOP + 0 结果重路由 | v1.0 |
+| `04-evidence-labeling.md` | 7 级水印系统、交叉验证矩阵 | v0.9 |
+| `05-adversarial-verification.md` | 3 角度验证模板、置信度调整规则 | v0.9 |
+| `06-synthesis-report.md` | 报告模板、水印集成、时间线概览 | v1.0 |
+| `07-timeline-analysis.md` | **新** 事件因果链分析、转折点识别、产业阶段定位 | v1.0 |
+| `10-integration-industry-analysis.md` | **新** SoG+IA 双插件集成工作流 | v1.0 |
 
 ### 优化资产
-
-| 文件 | 用途 |
-|------|------|
-| `01-language-channel.md` | 语言通道检测与翻译表 |
-| `02-adversarial-verification-template.md` | 各角度的详细搜索策略 |
-| `03-pubmed-mesh-check.md` | MeSH 陷阱词检测与交互修正 |
-| `04-evidence-watermark.md` | 完整符号系统与分配矩阵 |
 
 ---
 
@@ -193,7 +192,7 @@ claude
 | 版本 | 日期 | 变更 |
 |------|------|------|
 | v0.9.0 | 2026-06-04 | 初始版本：6 阶段 SOP、4 项 Tier-1 优化、E2E 测试验证 |
-| v1.0 (计划) | — | 时间序列分析、自动分块、0 结果自动重路由、专利检索集成 |
+| v1.0.0 | 2026-06-04 | 数据源自动路由矩阵 + 领域增强路由 + 0结果自动重路由 + 时间序列分析（因果链+转折点） + 专利检索集成（Google Patents/CNIPA） + industry-analysis 插件集成文档 |
 
 ---
 

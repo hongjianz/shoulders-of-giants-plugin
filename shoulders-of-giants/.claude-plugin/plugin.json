@@ -1,7 +1,7 @@
 {
   "name": "shoulders-of-giants",
-  "version": "0.9.0",
-  "description": "系统性调研方法论——站在巨人的肩膀上。多源并行采集 + 证据分层标注 + 对抗验证 + 带可信度评级的综合报告。覆盖PubMed/Consensus/bioRxiv/Web等多数据源，适用于学术文献调研、产业技术评估、竞争格局分析。",
+  "version": "1.0.0",
+  "description": "系统性调研方法论 v1.0——站在巨人的肩膀上。多源并行采集 + 证据分层标注 + 对抗验证 + 时间序列分析 + 专利检索 + 带可信度评级的综合报告。覆盖PubMed/Consensus/bioRxiv/Web/专利/ClinicalTrials/ChEMBL等多数据源，0结果自动重路由，支持与industry-analysis插件联动。适用于学术文献调研、产业技术评估、竞争格局分析。",
   "author": {
     "name": "hongjianz"
   },
@@ -13,6 +13,9 @@
     "literature-review",
     "evidence-based",
     "adversarial-verification",
+    "timeline-analysis",
+    "patent-search",
+    "cross-plugin-integration",
     "调研方法论"
   ],
   "commands": {

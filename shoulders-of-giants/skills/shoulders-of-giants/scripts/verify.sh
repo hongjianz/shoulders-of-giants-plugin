@@ -12,6 +12,8 @@ references=(
   "04-evidence-labeling.md"
   "05-adversarial-verification.md"
   "06-synthesis-report.md"
+  "07-timeline-analysis.md"
+  "10-integration-industry-analysis.md"
 )
 
 ref_dir="${PLUGIN_ROOT}/skills/shoulders-of-giants/references"

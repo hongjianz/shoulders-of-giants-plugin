@@ -10,8 +10,12 @@ description: >
   → adversarial verification (3 angles per claim) → synthesis report with
   confidence ratings.
   Supports --quick mode (skip adversarial verification) and --deep mode
-  (append timeline analysis).
-version: 0.9.0
+  (append timeline analysis + cross-plugin integration with industry-analysis).
+  v1.0 adds: patent search SOP, 0-result auto-rerouting across 6 data sources,
+  multi-level data source routing with domain-enhanced sub-question routing,
+  timeline causal analysis with inflection point identification, integrated
+  evidence passing to industry-analysis plugin for industry interpretation.
+version: 1.0.0
 argument-hint: "'[--quick|--deep] <research-question>'"
 allowed-tools:
   [
@@ -50,7 +54,7 @@ session-start:
 
 ---
 
-## 6阶段流程总览
+## 6阶段流程总览（v1.0）
 
 ```
 用户提问
@@ -59,14 +63,26 @@ session-start:
 阶段1: 问题分类 + 语言通道评估 ─── 展示结果 → 用户确认/修改
   │
   ▼
-阶段2: 检索计划生成 + MCP路由 ─── 展示结果 → 用户确认/调整
-  │
+阶段2: 检索计划生成 + 自动路由 ─── 展示结果 → 用户确认/调整
+  │   ├─ 自动路由矩阵（按问题类型+领域特征匹配最优数据源组合）
+  │   ├─ 领域增强路由（子问题级别：追加ChEMBL/专利/ClinicalTrials等）
+  │   └─ MCP降级规则（替代源+WebSearch site:模拟）
+
   ▼
 阶段3: 多源并行采集
-  │   ├─ PubMed (同行评议)
+  │   ├─ PubMed (同行评议, MeSH陷阱检测)
   │   ├─ Consensus (引文排名)
   │   ├─ bioRxiv (预印本)
-  │   └─ WebSearch (产业资讯)
+  │   ├─ WebSearch (产业资讯/多通道)
+  │   ├─ 专利检索 (Google Patents/CNIPA/Espacenet, v1.0新增)
+  │   └─ ClinicalTrials.gov / ChEMBL (领域按需)
+  │   └─ 0结果自动重路由（6种数据源各有独立降级链）
+  │
+  ▼
+阶段3b: 时间序列分析（deep模式新增，v1.0）
+  │   ├─ 事件提取与因果链分析
+  │   ├─ 关键转折点识别
+  │   └─ 产业阶段定位
   │
   ▼
 阶段4: 证据分层 + 水印标注
@@ -80,7 +96,11 @@ session-start:
   │
   ▼
 阶段6: 综合报告（带可信度评级）
-       └─ 信息缺口声明
+       ├─ 核心发现（带水印+验证链）
+       ├─ 时间线概览（deep模式）
+       ├─ 对抗验证结果（置信度调整说明）
+       ├─ 信息缺口声明
+       └─ 数据源列表
 ```
 
 ---
@@ -128,11 +148,26 @@ session-start:
 
 ### 阶段3: 多源并行采集
 
-- 同时向选定数据源发起检索
-- 检测0结果 → 自动放宽查询条件后重试
+- 同时向选定数据源发起检索（含 v1.0 新增的专利检索）
+- 检测0结果 → 执行自动重路由（每种数据源有独立降级链）
+- 专利检索见 `references/03-data-collection.md`（专利检索部分）
 - 检索结果按相关性排序，返回各自命中数
 
 **交互**：展示初步结果摘要 + 命中数统计。
+
+### 阶段3b: 时间序列分析（v1.0 deep模式新增）
+
+对收集到的发现按时间维度组织分析（详见 `references/07-timeline-analysis.md`）：
+
+- 事件提取与时间线排序
+- 因果链分析（强因果/弱因果/伪关联区分）
+- 关键转折点识别（技术突破/资本注入/政策变化等）
+- 产业阶段定位（基础研究期/转化期/成长期/成熟期）
+
+**交互**：展示时间线概览 + 转折点 → 用户确认后继续推进。
+
+**deep模式**：强制执行此阶段（与对抗验证一起）。
+**标准模式**：跳过，在阶段6的时间线部分简略呈现。
 
 ### 阶段4: 证据分层与深挖方向推荐
 
@@ -173,11 +208,18 @@ session-start:
 执行摘要
 调研方法（数据源+检索策略）
 核心发现（每条带水印）
+时间线概览（deep模式启用时间序列分析时）
+关键转折点（deep模式）
 对抗验证结果（置信度调整说明）
 产业影响时间线（如适用）
 信息缺口声明
 数据源列表
 ```
+
+**如果同时安装了 industry-analysis 插件**，在阶段6末尾提供证据传递摘要：
+- 展示证据摘要（关键发现 + 水印 + 信息缺口）
+- 推荐使用 `/industry-analysis` 做产业深度解读
+- 详见 `references/10-integration-industry-analysis.md`
 
 ---
 

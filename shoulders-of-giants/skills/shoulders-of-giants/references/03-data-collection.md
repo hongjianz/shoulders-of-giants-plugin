@@ -35,14 +35,52 @@
 
 **0结果处理**:
 ```
-if total_count == 0:
-  if MeSH翻译异常:
-    提示用户修正后重试
-  else:
-    自动执行:
-      1. 去掉最具体的限定词
-      2. 拆分成更宽泛的子查询
-      3. 报告结果
+0结果自动重路由流程:
+─────────────────────────────────────────────
+
+当任意数据源返回0条结果时，执行以下重路由策略:
+
+[PubMed 0结果]
+  第1尝试: 检查MeSH翻译异常 → 若异常则修正后重试
+  第2尝试: 去掉最具体的限定词，保留核心概念
+  第3尝试: 拆分成更宽泛的子查询，分别检索
+  第4尝试: 切换到 WebSearch site:pubmed.ncbi.nlm.nih.gov
+  若全部失败 → 标记"PubMed不可用" + 记录信息缺口
+
+[Consensus 0结果]
+  第1尝试: 简化查询词（去掉行业术语，保留核心概念）
+  第2尝试: 改用更宽泛的上位词
+  第3尝试: 切换到 WebSearch site:scholar.google.com
+  若全部失败 → 标记"Consensus不可用" + 记录信息缺口
+
+[bioRxiv 0结果]
+  第1尝试: 放宽分类范围（使用上层分类）
+  第2尝试: 扩展时间窗口（date_from提前6个月）
+  第3尝试: 切换到 WebSearch site:biorxiv.org
+  若全部失败 → 标记"bioRxiv不可用" + 记录信息缺口
+
+[ClinicalTrials.gov 0结果]
+  第1尝试: 放宽条件/去掉干预措施限定
+  第2尝试: 改用同义术语搜索（如"cancer"→"tumor"→"neoplasm"）
+  第3尝试: 切换到 WebSearch site:clinicaltrials.gov
+  若全部失败 → 标记"ClinicalTrials不可用" + 记录信息缺口
+
+[ChEMBL 0结果]
+  第1尝试: 扩大相似度阈值（如90%→80%）
+  第2尝试: 改用通用名检索替代商品名（或反之）
+  第3尝试: 切换到 WebSearch（drug + target + mechanism）
+  若全部失败 → 标记"ChEMBL不可用" + 记录信息缺口
+
+[WebSearch 0结果]（极少发生）
+  第1尝试: 去掉site限定或地域限定
+  第2尝试: 使用同义概念重写查询
+  第3尝试: 拆分为简短子查询分别执行
+  若全部失败 → 确认网络连接 + 标记信息缺口
+
+[全局0结果]（所有数据源均返回0）
+  1. 执行语言通道切换 → 中文检索（如当前是英文）
+  2. 使用更宽泛的概念重写整个检索策略
+  3. 报告"当前关键词未能检索到结果，建议重新设计检索策略"
 ```
 
 ### Consensus
@@ -84,6 +122,82 @@ if total_count == 0:
     WebSearch(query="中文关键词", domain=default)
 ```
 
+### 专利检索（v1.0新增）
+
+**入口**: WebSearch（专利数据库无专用MCP工具时用WebSearch模拟）
+
+当问题涉及专利/IP布局、技术路线绕行、FTO（自由实施）分析时启用。
+
+#### 专利数据库定向检索语法
+
+```markdown
+# Google Patents（通用覆盖好）
+WebSearch(query="<技术关键词> patent <公司/发明人>")
+WebSearch(query="<关键词> site:patents.google.com")
+
+# 欧洲专利局 Espacenet
+WebSearch(query="<关键词> site:worldwide.espacenet.com")
+
+# 中国专利 CNIPA（中文通道启用时追加）
+WebSearch(query="<中文关键词> 专利")
+WebSearch(query="<中文关键词> site:patents.google.com AND 中国")
+WebSearch(query="<关键词> site:cnipa.gov.cn")
+WebSearch(query="<关键词> site:patents.google.com AND country:CN")
+
+# 美国专利商标局 USPTO
+WebSearch(query="<关键词> site:uspto.gov")
+WebSearch(query="<关键词> site:patft.uspto.gov")
+
+# WIPO PCT 国际专利
+WebSearch(query="<关键词> site:patentscope.wipo.int")
+```
+
+#### 专利信息提取模板
+
+对每个找到的相关专利，记录以下结构：
+
+```
+专利信息卡:
+──────────────────────────────────────
+标题: [专利标题]
+专利号: [公开号，如 CNXXXXXXA / USXXXXXXXXB2]
+申请人: [公司/机构]
+发明人: [姓名]
+申请日: YYYY-MM-DD
+公开日: YYYY-MM-DD
+关键技术点: [2-3句摘要]
+战略意义: [技术路线布局/绕行/壁垒]
+关联水印: 🏢（专利公开信息，非评议）
+关联发现: [连接到调研中的其他发现]
+──────────────────────────────────────
+```
+
+#### 专利检索触发条件
+
+```
+自动检索条件:
+  □ 问题中包含 "patent" / "IP" / "知识产权" / "专利" / "绕行"
+  □ 问题类型为 竞争格局分析
+  □ 用户明确要求分析技术壁垒
+  □ 发现涉及未公开/未发表的技术（此时专利是重要验证源）
+
+推荐检索模式:
+  ┌─ 宽泛检索: <领域> + patent （发现布局全貌）
+  ├─ 精确检索: <公司> + <技术> + patent （跟踪特定玩家）
+  └─ 地域检索: <技术> + patent + country:CN （分析区域布局）
+```
+
+#### 专利信息局限性声明
+
+```
+重要提示:
+  - 专利公开 ≠ 技术有效 (专利可能未被实施)
+  - 专利申请 ≠ 授权 (大量申请被驳回)
+  - 专利信息通常滞后实际研发12-18个月
+  - 中国专利的英文翻译质量参差不齐，中文检索更可靠
+  - 本插件通过公开渠道检索，不替代专业专利分析工具
+```
+
 ## 搜索结果汇总
 
 采集完成后，按以下格式汇总：
@@ -97,6 +211,7 @@ if total_count == 0:
 | Consensus | N | N | [可用/受限/不可用] |
 | bioRxiv | N | N | [可用/受限/不可用] |
 | Web | N | N | [可用] |
+| 专利 | N | N | [启用/未启用] |
 
 ### 高相关结果摘要
 
