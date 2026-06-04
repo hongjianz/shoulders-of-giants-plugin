@@ -1,5 +1,7 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "shoulders-of-giants",
+  "displayName": "Shoulders of Giants",
   "version": "1.0.0",
   "description": "系统性调研方法论 v1.0——站在巨人的肩膀上。多源并行采集 + 证据分层标注 + 对抗验证 + 时间序列分析 + 专利检索 + 带可信度评级的综合报告。覆盖PubMed/Consensus/bioRxiv/Web/专利/ClinicalTrials/ChEMBL等多数据源，0结果自动重路由，支持与industry-analysis插件联动。适用于学术文献调研、产业技术评估、竞争格局分析。",
   "author": {
@@ -15,51 +17,6 @@
     "adversarial-verification",
     "timeline-analysis",
     "patent-search",
-    "cross-plugin-integration",
-    "调研方法论"
-  ],
-  "commands": {
-    "shoulders-of-giants": {
-      "file": "commands/shoulders-of-giants.md",
-      "allow-args": true,
-      "description": "系统性调研——多源采集+证据分层+对抗验证+可信度报告"
-    }
-  },
-  "skills": {
-    "shoulders-of-giants": {
-      "file": "skills/shoulders-of-giants/SKILL.md",
-      "description": "系统性调研方法论：自动分类问题→生成检索计划(用户确认)→多源并行采集→证据分层标注→对抗验证→综合报告。适用于学术文献调研、产业竞争分析、技术可行性评估。支持 --quick（快速模式，可跳过对抗验证）和 --deep（深度模式，追加引文分析）。"
-    }
-  },
-  "hooks": {
-    "session-start": {
-      "command": "bash ${CLAUDE_PLUGIN_ROOT}/skills/shoulders-of-giants/scripts/verify.sh",
-      "description": "Verify all reference files exist"
-    }
-  },
-  "mcp": {
-    "description": "系统化调研推荐使用MCP数据源增强采集。需要以下MCP服务器中的至少一个：PubMed、Consensus、bioRxiv。可选：ClinicalTrials.gov、ChEMBL。WebSearch作为通用回退方案。",
-    "optional": [
-      {
-        "name": "plugin-bio-research-pubmed",
-        "description": "同行评议文献——核心数据源"
-      },
-      {
-        "name": "plugin-bio-research-consensus",
-        "description": "学术论文综合检索+引文排名——核心数据源"
-      },
-      {
-        "name": "plugin-bio-research-biorxiv",
-        "description": "预印本最新研究——推荐"
-      },
-      {
-        "name": "plugin-bio-research-c-trials",
-        "description": "临床试验数据（产业调研/生物医药场景）——可选"
-      },
-      {
-        "name": "plugin-bio-research-chembl",
-        "description": "药物靶点/化合物数据（生物医药场景）——可选"
-      }
-    ]
-  }
+    "cross-plugin-integration"
+  ]
 }
