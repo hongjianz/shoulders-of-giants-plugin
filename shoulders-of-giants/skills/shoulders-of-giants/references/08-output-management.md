@@ -2,7 +2,8 @@
 
 ## 输出目录规范
 
-- **默认输出目录**: `.shoulders-of-giants/outputs/`（相对当前工作目录）
+- **默认输出目录**: `outputs/`（相对当前工作目录，显式目录方便查找）
+- **备选目录（隐藏存储）**: `.shoulders-of-giants/outputs/`（供跨会话引用，不推荐直接交付）
 - **命名格式**: `<YYYY-MM-DD>-<topic-slug>.md`
 - **会话管理**: 会话结束时提醒用户保存或清理输出文件
 - **跨会话引用**: 输出文件可作为后续分析或 industry-analysis 插件的输入
